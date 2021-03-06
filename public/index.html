@@ -1,36 +1,105 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, minimal-ui">
-  <title>Cramplesnuth Simulator</title>
+  <title>Congleton Snake</title>
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <style>
-    body, html {
+    :root {
+      --block-size: 1em;
+      --game-size: 12;
+    }
+
+    body,
+    html {
       width: 100%;
       height: 100%;
     }
+
+    .game-container {
+      align-items: center;
+      text-align: center;
+    }
+
+    .gameName {
+      display: block;
+      padding-bottom: 1em;
+    }
+
+    .game {
+      margin: auto;
+      height: calc(var(--block-size) * var(--game-size));
+      width: calc(var(--block-size) * var(--game-size));
+      display: grid;
+      grid-template-rows: repeat(var(--game-size), var(--block-size));
+      justify-items: center;
+    }
+
+    .line {
+      display: grid;
+      grid-template-columns: repeat(var(--game-size), var(--block-size));
+      align-items: center;
+    }
+
+    .block {
+      background-color: black;
+      width: var(--block-size);
+      height: var(--block-size);
+    }
   </style>
 </head>
-<body>
-<div id="app"></div>
-<script>
-  new Vue({
-    el: `#app`,
-    data() {
-      return {
 
-      };
-    },
-    computed: {
-    },
-    methods: {},
-    template: `
-      <div>Hello world</div>
-    `
-  });
-</script>
+<body>
+  <div id="app"></div>
+  <script>
+    new Vue({
+      el: `#app`,
+      data() {
+        return {
+          nrGames: 1,
+          initialized: true,
+          games: [],
+        };
+      },
+      computed: {
+      },
+      methods: {
+        initilizeGame() {
+          return [...Array(12).keys()].map(i => {
+            return [...Array(12).keys()].map(j => {
+              return 0;
+            })
+          });
+        }
+      },
+      created() {
+        this.games.push(this.initilizeGame());
+        console.log(this.games);
+      },
+      template: `
+      <div>
+        <div v-if="!initialized">
+          <p>Hello world</p>
+        </div>
+        <div v-if="initialized">
+          <div v-for="(game, index) in games" class="game-container">
+            <span class="gameName">game {{index + 1}}</span>
+            <div class="game">
+              <div v-for="line in game" class="line">
+                <div v-for="block in line" class="block">
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      `
+    });
+  </script>
 </body>
+
 </html>
