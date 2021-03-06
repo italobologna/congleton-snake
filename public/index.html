@@ -10,14 +10,20 @@
   <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   <style>
     :root {
-      --block-size: 1em;
-      --game-size: 12;
+      --block-size: 0.8em;
+      --game-size: 14;
     }
 
     body,
     html {
       width: 100%;
       height: 100%;
+    }
+
+    .structure-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 50px
     }
 
     .game-container {
@@ -46,9 +52,20 @@
     }
 
     .block {
-      background-color: black;
       width: var(--block-size);
       height: var(--block-size);
+    }
+
+    .empty {
+      background-color: black;
+    }
+
+    .snake {
+      background-color: blanchedalmond;
+    }
+
+    .apple {
+      background-color: crimson;
     }
   </style>
 </head>
@@ -60,25 +77,42 @@
       el: `#app`,
       data() {
         return {
-          nrGames: 1,
-          initialized: true,
+          nrGames: 10,
+          initialized: false,
           games: [],
         };
       },
       computed: {
+        blockClass() {
+          return (block) => {
+            console.log(block)
+            return {
+              empty: block === 0,
+              snake: block === 1,
+              apple: block === 2,
+            }
+          }
+        }
       },
       methods: {
         initilizeGame() {
-          return [...Array(12).keys()].map(i => {
-            return [...Array(12).keys()].map(j => {
+          const game = [...Array(14).keys()].map(i => {
+            return [...Array(14).keys()].map(j => {
               return 0;
             })
           });
+          game[game.length / 2][game.length / 2] = 2;
+          game[1][1] = 1;
+          game[1][2] = 1;
+          game[1][3] = 1;
+          return game;
         }
       },
       created() {
-        this.games.push(this.initilizeGame());
-        console.log(this.games);
+        for (let n = 0; n < this.nrGames; n++) {
+          this.games.push(this.initilizeGame());
+        }
+        this.initialized = true;
       },
       template: `
       <div>
@@ -86,11 +120,12 @@
           <p>Hello world</p>
         </div>
         <div v-if="initialized">
+          <div class="structure-container">
           <div v-for="(game, index) in games" class="game-container">
             <span class="gameName">game {{index + 1}}</span>
             <div class="game">
               <div v-for="line in game" class="line">
-                <div v-for="block in line" class="block">
+                <div v-for="block in line" class="block" v-bind:class="blockClass(block)">
                 </div>
               </div>
             </div>
